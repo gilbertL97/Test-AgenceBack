@@ -38,7 +38,7 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $receitaLiquida = $this->userService->getReceitaLiquida(
-            $data['idUsuario'],
+            $data['idUsuarios'],
             $data['startDate'],
             $data['endDate']
         );

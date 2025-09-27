@@ -17,7 +17,15 @@ class ReceitaLiquidaRequest extends FormRequest
     public function rules()
     {
         return [
-            'idUsuario'  => 'required|exists:cao_usuario,co_usuario',
+            'idUsuarios' => [
+                'required',
+                'array',
+                'min:1',
+            ],
+            'idUsuarios.*' => [
+                'string',
+                'exists:cao_usuario,co_usuario',
+            ],
             'startDate'  => 'required|date|before_or_equal:endDate',
             'endDate'    => 'required|date|after_or_equal:startDate',
         ];

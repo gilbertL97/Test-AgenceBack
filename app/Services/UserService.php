@@ -22,14 +22,44 @@ class UserService
             ->get();
     }
 
-    public function getReceitaLiquida($idUsuario, $startDate, $endDate)
+    public function getReceitaLiquida($idUsuarios, $startDate, $endDate)
     {
         return DB::table('cao_fatura as f')
             ->join('cao_os as o', 'f.co_os', '=', 'o.co_os')
             ->join('cao_salario as s', 'o.co_usuario', '=', 's.co_usuario')
-            ->select(DB::raw('SUM(f.valor - f.valor * s.brut_salario / 100) as receita_liquida'))
+            ->join('cao_usuario as u', 'o.co_usuario', '=', 'u.co_usuario')
+            ->select(
+                DB::raw('YEAR(f.data_emissao) as ano'),
+                DB::raw('MONTH(f.data_emissao) as mes'),
+                DB::raw('SUM(f.valor) as total_receita'),
+                DB::raw('o.co_usuario'),
+                DB::raw('u.no_usuario')
+            )
+            ->whereIn('o.co_usuario', $idUsuarios)
+            ->whereBetween('f.data_emissao', [$startDate, $endDate])
+            ->groupBy(DB::raw('YEAR(f.data_emissao)'), DB::raw('MONTH(f.data_emissao)'), DB::raw('o.co_usuario'),  DB::raw('u.no_usuario'))
+            ->orderBy('ano')
+            ->orderBy('mes')
+            ->get();
+    }
+
+    public function getReceitaLiquidaByClient($idUsuario, $startDate, $endDate)
+    {
+        return DB::table('cao_fatura as f')
+            ->join('cao_os as o', 'f.co_os', '=', 'o.co_os')
+            ->join('cao_salario as s', 'o.co_usuario', '=', 's.co_usuario')
+
+            ->select(
+                DB::raw('YEAR(f.data_emissao) as ano'),
+                DB::raw('MONTH(f.data_emissao) as mes'),
+                DB::raw('SUM(f.valor) as total_receita'),
+                DB::raw('o.co_usuario')
+            )
             ->where('o.co_usuario', $idUsuario)
             ->whereBetween('f.data_emissao', [$startDate, $endDate])
-            ->value('receita_liquida');
+            ->groupBy(DB::raw('YEAR(f.data_emissao)'), DB::raw('MONTH(f.data_emissao)'), DB::raw('o.co_usuario'))
+            ->orderBy('ano')
+            ->orderBy('mes')
+            ->get();
     }
 }
