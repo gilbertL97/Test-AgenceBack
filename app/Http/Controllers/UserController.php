@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\UserService;
- use App\Models\User;
+use App\Models\User;
 
 class UserController extends Controller
 {
-     protected $userService;
+    protected $userService;
 
-   
+
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
@@ -23,15 +23,24 @@ class UserController extends Controller
 
     public function show(string $id)
     {
-       
-      return User::find($id);
-    
+
+        return User::find($id);
     }
     public function getConsultor()
     {
-       
-    $consultors = $this->userService->getConsultors();
-    return response()->json($consultors);
+
+        $consultors = $this->userService->getConsultors();
+        return response()->json($consultors);
     }
 
+    public function getReceitaLiquida($idUsuario, $startDate, $endDate)
+    {
+        $data = $request->validated();
+        $receitaLiquida = $this->userService->getReceitaLiquida(
+            $data['idUsuario'],
+            $data['startDate'],
+            $data['endDate']
+        );
+        return response()->json(['receita_liquida' => $receitaLiquida]);
+    }
 }

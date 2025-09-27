@@ -11,9 +11,9 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-  protected $table      = 'cao_usuario';   // tu tabla real
-   protected $primaryKey = 'co_usuario';
-    public $incrementing  = true;
+    protected $table      = 'cao_usuario';   // tu tabla real
+    protected $primaryKey = 'co_usuario';
+    public $incrementing  = false;
     public $timestamps    = false;
 
     protected $fillable = [
@@ -69,11 +69,11 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    // protected function casts(): array
+    // {
+    //     return [
+    //         'email_verified_at' => 'datetime',
+    //         'password' => 'hashed',
+    //     ];
+    // }
 }
