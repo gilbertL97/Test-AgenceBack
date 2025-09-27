@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\UserService;
 use App\Models\User;
+use App\Http\Requests\ReceitaLiquidaRequest;
 
 class UserController extends Controller
 {
@@ -33,7 +34,7 @@ class UserController extends Controller
         return response()->json($consultors);
     }
 
-    public function getReceitaLiquida($idUsuario, $startDate, $endDate)
+    public function getReceitaLiquida(ReceitaLiquidaRequest $request)
     {
         $data = $request->validated();
         $receitaLiquida = $this->userService->getReceitaLiquida(
