@@ -37,11 +37,16 @@ class UserController extends Controller
     public function getReceitaLiquida(ReceitaLiquidaRequest $request)
     {
         $data = $request->validated();
-        $receitaLiquida = $this->userService->getReceitaLiquida(
-            $data['idUsuarios'],
-            $data['startDate'],
-            $data['endDate']
-        );
-        return response()->json(['receita_liquida' => $receitaLiquida]);
+        $result = [];
+
+        foreach ($data['idUsuarios'] as $idUsuario) {
+            $receitaLiquida = $this->userService->getReceitaLiquida(
+                $idUsuario,
+                $data['startDate'],
+                $data['endDate']
+            );
+            $result[$idUsuario] = $receitaLiquida;
+        }
+        return response()->json(['receita_liquida' => $result]);
     }
 }

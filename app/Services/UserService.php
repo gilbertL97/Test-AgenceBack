@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class UserService
@@ -22,25 +21,30 @@ class UserService
             ->get();
     }
 
-    public function getReceitaLiquida($idUsuarios, $startDate, $endDate)
+    public function getReceitaLiquida($idUsuario, $startDate, $endDate)
     {
-        return DB::table('cao_fatura as f')
+        $montly = DB::table('cao_fatura as f')
             ->join('cao_os as o', 'f.co_os', '=', 'o.co_os')
             ->join('cao_salario as s', 'o.co_usuario', '=', 's.co_usuario')
             ->join('cao_usuario as u', 'o.co_usuario', '=', 'u.co_usuario')
             ->select(
                 DB::raw('YEAR(f.data_emissao) as ano'),
                 DB::raw('MONTH(f.data_emissao) as mes'),
-                DB::raw('SUM(f.valor) as total_receita'),
-                DB::raw('o.co_usuario'),
-                DB::raw('u.no_usuario')
+                DB::raw('SUM(f.valor) as valor_total'),
+                DB::raw('SUM(f.total_imp_inc) as total_imp'),
+                DB::raw('SUM(f.valor) - SUM(f.total_imp_inc) as receita_liquida'),
             )
-            ->whereIn('o.co_usuario', $idUsuarios)
+            ->where('o.co_usuario', $idUsuario)
             ->whereBetween('f.data_emissao', [$startDate, $endDate])
-            ->groupBy(DB::raw('YEAR(f.data_emissao)'), DB::raw('MONTH(f.data_emissao)'), DB::raw('o.co_usuario'),  DB::raw('u.no_usuario'))
+            ->groupBy(DB::raw('YEAR(f.data_emissao)'), DB::raw('MONTH(f.data_emissao)'))
             ->orderBy('ano')
             ->orderBy('mes')
             ->get();
+        $total = $montly->sum('receita_liquida');
+        return [
+            'mensual' => $montly,
+            'total' => $total
+        ];
     }
 
     public function getReceitaLiquidaByClient($idUsuario, $startDate, $endDate)
