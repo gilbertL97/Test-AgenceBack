@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class UserService
 {
@@ -23,6 +24,11 @@ class UserService
 
     public function getRelatoria($idUser, $startDate, $endDate)
     {
+
+        // Asegura que sean mmayores que el inicio del mes y el fin del mes auque los mese sean diferrentes
+        $startDate = Carbon::parse($startDate)->startOfMonth()->format('Y-m-d');
+        $endDate = Carbon::parse($endDate)->addMonthNoOverflow()->startOfMonth()->format('Y-m-d');
+
         $montly = DB::table('cao_fatura as f')
             ->join('cao_os as o', 'f.co_os', '=', 'o.co_os')
             ->join('cao_salario as s', 'o.co_usuario', '=', 's.co_usuario')
