@@ -34,19 +34,19 @@ class UserController extends Controller
         return response()->json($consultors);
     }
 
-    public function getReceitaLiquida(ReceitaLiquidaRequest $request)
+    public function getRelatoria(ReceitaLiquidaRequest $request)
     {
         $data = $request->validated();
         $result = [];
 
         foreach ($data['idUsuarios'] as $idUsuario) {
-            $receitaLiquida = $this->userService->getReceitaLiquida(
+            $receitaLiquida = $this->userService->getRelatoria(
                 $idUsuario,
                 $data['startDate'],
                 $data['endDate']
             );
-            $result[$idUsuario] = $receitaLiquida;
+            $result[] = $receitaLiquida;
         }
-        return response()->json(['receita_liquida' => $result]);
+        return response()->json([$result]);
     }
 }

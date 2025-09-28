@@ -21,7 +21,7 @@ class UserService
             ->get();
     }
 
-    public function getReceitaLiquida($idUser, $startDate, $endDate)
+    public function getRelatoria($idUser, $startDate, $endDate)
     {
         $montly = DB::table('cao_fatura as f')
             ->join('cao_os as o', 'f.co_os', '=', 'o.co_os')
@@ -51,7 +51,9 @@ class UserService
             ->orderBy('mes')
             ->get();
         $total = [$montly->sum('receita_liquida'), $montly->sum('salario'), $montly->sum('valor_comissao'), $montly->sum('lucro')];
+        $name = User::where('co_usuario', $idUser)->value('no_usuario');
         return [
+            'name' => $name,
             'mensual' => $montly,
             'total' => $total
         ];

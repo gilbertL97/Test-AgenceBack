@@ -10,4 +10,4 @@ use App\Http\Controllers\UserController;
 Route::apiResource('customers', ClientController::class);
 Route::apiResource('users', UserController::class);
 Route::get('consultors', [UserController::class, 'getConsultor']);
-Route::get('receita', [UserController::class, 'getReceitaLiquida']);
+Route::get('relatoria', [UserController::class, 'getRelatoria']);
