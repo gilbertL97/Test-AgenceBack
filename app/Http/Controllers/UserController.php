@@ -47,6 +47,6 @@ class UserController extends Controller
             );
             $result[] = $receitaLiquida;
         }
-        return response()->json([$result]);
+        return response()->json($result);
     }
 }
