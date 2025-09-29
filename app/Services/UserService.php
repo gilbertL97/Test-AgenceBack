@@ -37,13 +37,11 @@ class UserService
                 DB::raw('YEAR(f.data_emissao) as ano'),
                 DB::raw('MONTH(f.data_emissao) as mes'),
                 DB::raw('SUM(f.valor) as valor_total'),
-                DB::raw('SUM(f.total_imp_inc) as total_imp_porciento'),
-                DB::raw('SUM(f.valor) * (SUM(f.total_imp_inc) / 100) as valor_descontado'),
-                DB::raw('MAX(f.comissao_cn) as comissao'), // <--- cambio aquí
-                DB::raw('SUM(f.valor) - (SUM(f.valor) * (SUM(f.total_imp_inc) / 100)) as receita_liquida'),
-                DB::raw('MAX(s.brut_salario) as salario'), // <--- cambio aquí
-                DB::raw('(SUM(f.valor)-(SUM(f.valor) * (SUM(f.total_imp_inc) / 100)))*(MAX(f.comissao_cn) /100) as valor_comissao'),
-                DB::raw('(SUM(f.valor) - (SUM(f.valor) * (SUM(f.total_imp_inc) / 100)))-(MAX(s.brut_salario)-((SUM(f.valor)-(SUM(f.valor) * (SUM(f.total_imp_inc) / 100)))*(MAX(f.comissao_cn) /100))) as lucro')
+                DB::raw('SUM(f.valor * f.total_imp_inc / 100)  as valor_descontado'),
+                DB::raw('SUM(f.valor) - (SUM(f.valor * f.total_imp_inc / 100) ) as receita_liquida'),
+                DB::raw('MAX(s.brut_salario) as salario'), // <--- cambio aquí para sacarlo del group by
+                DB::raw('SUM((f.valor - f.valor * f.total_imp_inc / 100) * f.comissao_cn / 100) as valor_comissao'),
+                DB::raw('SUM(f.valor - f.valor * f.total_imp_inc / 100)- ( MAX(s.brut_salario) - SUM((f.valor - f.valor * f.total_imp_inc / 100) * f.comissao_cn / 100)) as lucro')
             )
             ->where('o.co_usuario', $idUser)
             ->whereBetween('f.data_emissao', [$startDate, $endDate])
