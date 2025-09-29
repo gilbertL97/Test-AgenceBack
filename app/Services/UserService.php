@@ -53,10 +53,12 @@ class UserService
             ->orderBy('mes')
             ->get();
         $total = [$montly->sum('receita_liquida'), $montly->sum('salario'), $montly->sum('valor_comissao'), $montly->sum('lucro')];
+        $salary = $montly->isNotEmpty() ? $montly->first()->salario : 0;
         $name = User::where('co_usuario', $idUser)->value('no_usuario');
         return [
             'name' => $name,
             'mensual' => $montly,
+            'salario' => $salary,
             'total' => $total
         ];
     }
