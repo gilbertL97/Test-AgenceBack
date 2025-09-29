@@ -27,7 +27,7 @@ class UserService
 
         // Asegura que sean mmayores que el inicio del mes y el fin del mes auque los mese sean diferrentes
         $startDate = Carbon::parse($startDate)->startOfMonth()->format('Y-m-d');
-        $endDate = Carbon::parse($endDate)->addMonthNoOverflow()->startOfMonth()->format('Y-m-d');
+        $endDate = Carbon::parse($endDate)->endOfMonth()->format('Y-m-d');
 
         $montly = DB::table('cao_fatura as f')
             ->join('cao_os as o', 'f.co_os', '=', 'o.co_os')
